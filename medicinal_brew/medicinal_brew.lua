@@ -49,8 +49,8 @@ local function place_blaze_powder(brewing_stand, blaze_powder_container)
   end
   if brewing_stand.list()[5] == nil then
     blaze_powder_container.pushItems(peripheral.getName(brewing_stand), blaze_powder_available_slot, 1, TARGET_SLOT.BLAZE_POWER)
+    print("placed 1 blaze powder")
   end
-  print("placed 1 blaze powder")
 end
 
 ---@param glass_bottle_container ccTweaked.peripheral.wrappedPeripheral
