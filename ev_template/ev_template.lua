@@ -34,8 +34,8 @@ local VITAMIN = {
     OUTPUT = "Calcium",
   },
   CARBOS = {
-    INGREDIENT = "PP Up",
-    POTION = "Tamato",
+    INGREDIENT = "Tamato Berry",
+    POTION = "PP Up",
     OUTPUT = "Carbos",
   },
 }
