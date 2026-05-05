@@ -25,9 +25,13 @@ local function main()
     local is_ready_to_harvest = helpers.scan_ready()
 
     if is_ready_to_harvest then
+      print("harvesting!")
       main_helper()
+    else
+      print("farm is not ready to harvest")
     end
 
+    print("resting...")
     sleep(120)
   end
 end
