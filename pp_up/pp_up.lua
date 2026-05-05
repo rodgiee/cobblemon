@@ -20,23 +20,21 @@ local Source_Slot = {
   BREW = 5,
 }
 
----@param table table
-local function is_empty(table)
-  return next(table) == nil
-end
-
----@param inspection ccTweaked.peripheral.itemList list
-local function check_phase(inspection)
-  local phase = ""
-
-  if inspection[Target_Slot.POTION_ONE] == nil then
-    phase = Phase.EMPTY
+local function place_medicinal_leek(leek_container, brewing_stand)
+  if leek_container.pushItems(peripheral.getName(brewing_stand), 1, 1, Target_Slot.INGREDIENT) == 0 then
+    error("error: ran out of medicinal leeks!")
   end
-
-  return phase
+  print("dropped 1 medicinal leek")
 end
 
-local err = require("err")
+local function place_blaze_powder(brewing_stand, blaze_powder_container)
+  if brewing_stand.list()[5] == nil then
+    if blaze_powder_container.pushItems(peripheral.getName(brewing_stand), 1, 1, Target_Slot.BLAZE_POWER) == 0 then
+      error("error: ran out of blaze powder!")
+    end
+    print("placed 1 blaze powder")
+  end
+end
 
 local function main()
   local brewing_stand = peripheral.wrap("front")
@@ -44,35 +42,26 @@ local function main()
   local blaze_powder_container = peripheral.wrap("right")
   local output_container = peripheral.wrap("top")
 
-  if output_container == nil then
-    error("error: missing output_container barrel")
-  end
-
-  if blaze_powder_container == nil then
-    error("error: missing blaze_powder_container barrel")
-  end
-
-  if brewing_stand == nil then
-    error("error: missing brewing stand")
-  end
-
-  if leek_container == nil then
-    error("error: missing leek_container barrel")
-  end
-  local phase = check_phase(brewing_stand.list())
-
-  if phase == Phase.EMPTY then
-    if brewing_stand.list()[5] == nil then
-      if blaze_powder_container.pushItems(peripheral.getName(brewing_stand), 1, 1, Target_Slot.BLAZE_POWER) == 0 then
-        error("error: ran out of blaze powder!")
-      end
-      print("placed 1 blaze powder")
+  while true do
+    if output_container == nil then
+      error("error: missing output_container barrel")
     end
 
-    if leek_container.pushItems(peripheral.getName(brewing_stand), 1, 1, Target_Slot.INGREDIENT) == 0 then
-      error("error: ran out of medicinal leeks!")
+    if blaze_powder_container == nil then
+      error("error: missing blaze_powder_container barrel")
     end
-    print("dropped 1 medicinal leek")
+
+    if brewing_stand == nil then
+      error("error: missing brewing stand")
+    end
+
+    if leek_container == nil then
+      error("error: missing leek_container barrel")
+    end
+
+    place_blaze_powder(brewing_stand, blaze_powder_container)
+
+    place_medicinal_leek(leek_container, brewing_stand)
 
     if turtle.getItemCount(Source_Slot.GLASS_BOTTLE) == 0 then
       error("error: ran out of glass bottles")
@@ -80,7 +69,6 @@ local function main()
     turtle.select(Source_Slot.GLASS_BOTTLE)
 
     local count = turtle.getItemCount(Source_Slot.GLASS_BOTTLE)
-    local diff = turtle.getItemCount(Source_Slot.GLASS_BOTTLE) - 3
     local potions_count = 3
     if count >= 4 then
       potions_count = 3
