@@ -42,7 +42,7 @@ local function main()
   local brewing_stand = peripheral.wrap("front")
   local leek_container = peripheral.wrap("left")
   local blaze_powder_container = peripheral.wrap("right")
-  local output_container = peripheral.wrap("back")
+  local output_container = peripheral.wrap("top")
 
   if output_container == nil then
     error("error: missing output_container barrel")
@@ -75,11 +75,22 @@ local function main()
     print("dropped 1 medicinal leek")
 
     if turtle.getItemCount(Source_Slot.GLASS_BOTTLE) == 0 then
-      error("error: ran out of glass bottles!")
+      error("error: ran out of glass bottles")
     end
     turtle.select(Source_Slot.GLASS_BOTTLE)
 
-    local potions_count = ((turtle.getItemCount(Source_Slot.GLASS_BOTTLE) - 1) % 3) + 1
+    local count = turtle.getItemCount(Source_Slot.GLASS_BOTTLE)
+    local diff = turtle.getItemCount(Source_Slot.GLASS_BOTTLE) - 3
+    local potions_count = 3
+    if count >= 4 then
+      potions_count = 3
+    elseif count == 3 then
+      potions_count = 2
+    elseif count == 2 then
+      potions_count = 1
+    else
+      error("error: not enough glass bottles")
+    end
 
     for i = 1, potions_count do
       turtle.placeDown()
@@ -91,28 +102,19 @@ local function main()
       turtle.drop()
     end
     print("transferred " .. potions_count .. " potions")
-    if 1 == 1 then
-      return
-    end
-    turtle.select(Source_Slot.POTION_ONE)
-    turtle.drop()
-    turtle.select(Source_Slot.POTION_TWO)
-    turtle.drop()
-    turtle.select(Source_Slot.POTION_THREE)
-    turtle.drop()
 
     print("waiting...")
     sleep(20)
 
     turtle.select(Source_Slot.BREW)
-    parallel.waitForAll(function()
+
+    for i = 1, potions_count do
       turtle.suck()
-    end, function()
-      turtle.suck()
-    end, function()
-      turtle.suck()
-    end)
-    print("retrieved 3 medicinal brews")
+    end
+
+    turtle.select(Source_Slot.BREW)
+    turtle.dropUp()
+    print("outputted " .. potions_count .. " medicinal brews!")
   end
 end
 
