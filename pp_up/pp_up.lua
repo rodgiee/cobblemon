@@ -45,6 +45,24 @@ local function place_blaze_powder(brewing_stand, blaze_powder_container)
   end
 end
 
+---@param potion_container ccTweaked.peripheral.wrappedPeripheral
+---@param brewing_stand ccTweaked.peripheral.wrappedPeripheral
+local function place_potion(potion_container, brewing_stand, potion_name)
+  local available_slot = get_last_available_slot(potion_container)
+
+  if available_slot == -1 then
+    error("error: ran out of " .. potion_name)
+  end
+  local slot_total = potion_container.list()[available_slot].count
+  local iterations = math.min(slot_total, 3)
+
+  for i = 1, iterations do
+    potion_container.pushItems(peripheral.getName(brewing_stand), available_slot, 1, TARGET_SLOT.POTION_ONE + i - 1)
+  end
+
+  print("dropped " .. iterations .. " " .. potion_name)
+end
+
 local function main()
   local medicinal_brew_container = peripheral.wrap("left")
   local vivichoke_container = peripheral.wrap("back")
@@ -75,6 +93,8 @@ local function main()
   place_blaze_powder(brewing_stand, blaze_powder_container)
 
   place_ingredient(vivichoke_container, brewing_stand, "vivichoke")
+
+  place_potion(medicinal_brew_container, brewing_stand, "medicinal brew")
 end
 
 main()
