@@ -3,6 +3,11 @@ local ev_template = {}
 ---@alias VITAMIN table<string, table<string, string>>
 ---@type VITAMIN
 local VITAMIN = {
+  PP_UP = {
+    INGREDIENT = "Vivichoke",
+    POTION = "Medicinal Brew",
+    OUTPUT = "PP Up",
+  },
   IRON = {
     INGREDIENT = "Qualot Berry",
     POTION = "PP Up",
