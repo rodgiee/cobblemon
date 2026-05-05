@@ -26,6 +26,8 @@ local function get_last_available_slot(container)
   return last_available_slot
 end
 
+---@param leek_container ccTweaked.peripheral.wrappedPeripheral
+---@param brewing_stand ccTweaked.peripheral.wrappedPeripheral
 local function place_medicinal_leek(leek_container, brewing_stand)
   local leek_available_slot = get_last_available_slot(leek_container)
 
@@ -51,6 +53,7 @@ local function place_blaze_powder(brewing_stand, blaze_powder_container)
   print("placed 1 blaze powder")
 end
 
+---@param count integer
 local function get_potion_count(count)
   if turtle.getItemCount(SOURCE_SLOT.GLASS_BOTTLE) == 0 then
     error("error: ran out of glass bottles")
