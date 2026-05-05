@@ -82,18 +82,18 @@ end
 
 local function main()
   while true do
-    local medicinal_brew_container = peripheral.wrap("left")
-    local vivichoke_container = peripheral.wrap("back")
+    local potion_container = peripheral.wrap("left")
+    local ingredient_container = peripheral.wrap("back")
     local blaze_powder_container = peripheral.wrap("right")
     local output_container = peripheral.wrap("top")
     local brewing_stand = peripheral.wrap("front")
 
-    if medicinal_brew_container == nil then
-      error("error: missing medicinal_brew_container")
+    if potion_container == nil then
+      error("error: missing potion_container")
     end
 
-    if vivichoke_container == nil then
-      error("error: missing vivichoke_container")
+    if ingredient_container == nil then
+      error("error: missing ingredient_container")
     end
 
     if blaze_powder_container == nil then
@@ -110,9 +110,9 @@ local function main()
 
     place_blaze_powder(brewing_stand, blaze_powder_container)
 
-    place_ingredient(vivichoke_container, brewing_stand, "vivichoke")
+    place_ingredient(ingredient_container, brewing_stand, "vivichoke")
 
-    local potions_count = place_potion(medicinal_brew_container, brewing_stand, "medicinal brew")
+    local potions_count = place_potion(potion_container, brewing_stand, "medicinal brew")
 
     print("waiting...")
     sleep(20)
