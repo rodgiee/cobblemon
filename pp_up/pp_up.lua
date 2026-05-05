@@ -82,6 +82,10 @@ end
 
 local function main()
   while true do
+    local ingredient_name = "vivichoke"
+    local potion_name = "medicinal_brew"
+    local output_name = "pp_up"
+
     local potion_container = peripheral.wrap("left")
     local ingredient_container = peripheral.wrap("back")
     local blaze_powder_container = peripheral.wrap("right")
@@ -110,14 +114,14 @@ local function main()
 
     place_blaze_powder(brewing_stand, blaze_powder_container)
 
-    place_ingredient(ingredient_container, brewing_stand, "vivichoke")
+    place_ingredient(ingredient_container, brewing_stand, ingredient_name)
 
-    local potions_count = place_potion(potion_container, brewing_stand, "medicinal brew")
+    local potions_count = place_potion(potion_container, brewing_stand, potion_name)
 
     print("waiting...")
     sleep(20)
 
-    place_output(potions_count, "pp up")
+    place_output(potions_count, output_name)
   end
 end
 
