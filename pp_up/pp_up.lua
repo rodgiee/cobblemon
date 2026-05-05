@@ -27,22 +27,28 @@ local function get_last_available_slot(container)
 end
 
 local function place_medicinal_leek(leek_container, brewing_stand)
-  if leek_container.pushItems(peripheral.getName(brewing_stand), 1, 1, TARGET_SLOT.INGREDIENT) == 0 then
+  local leek_available_slot = get_last_available_slot(leek_container)
+
+  if leek_available_slot == -1 then
     error("error: ran out of medicinal leeks!")
   end
+
+  leek_container.pushItems(peripheral.getName(brewing_stand), leek_available_slot, 1, TARGET_SLOT.INGREDIENT)
   print("dropped 1 medicinal leek")
 end
 
 ---@param brewing_stand ccTweaked.peripheral.wrappedPeripheral
 ---@param blaze_powder_container ccTweaked.peripheral.wrappedPeripheral
 local function place_blaze_powder(brewing_stand, blaze_powder_container)
-  get_last_available_slot()
-  if brewing_stand.list()[5] == nil then
-    if blaze_powder_container.pushItems(peripheral.getName(brewing_stand), 1, 1, TARGET_SLOT.BLAZE_POWER) == 0 then
-      error("error: ran out of blaze powder!")
-    end
-    print("placed 1 blaze powder")
+  local blaze_powder_available_slot = get_last_available_slot(blaze_powder_container)
+
+  if blaze_powder_available_slot == -1 then
+    error("error: ran out of blaze powder!")
   end
+  if brewing_stand.list()[5] == nil then
+    blaze_powder_container.pushItems(peripheral.getName(brewing_stand), blaze_powder_available_slot, 1, TARGET_SLOT.BLAZE_POWER)
+  end
+  print("placed 1 blaze powder")
 end
 
 local function get_potion_count(count)
