@@ -53,11 +53,27 @@ local function place_blaze_powder(brewing_stand, blaze_powder_container)
   print("placed 1 blaze powder")
 end
 
+---@param glass_bottle_container ccTweaked.peripheral.wrappedPeripheral
+local function reload_glass_bottles(glass_bottle_container)
+  local inventory_count = turtle.getItemCount(SOURCE_SLOT.GLASS_BOTTLE)
+  if inventory_count <= 1 then
+    print("reloading glass bottles")
+    turtle.turnLeft()
+    turtle.turnLeft()
+
+    turtle.select(SOURCE_SLOT.GLASS_BOTTLE)
+    local is_items_picked_up, reason = turtle.suck()
+
+    turtle.turnLeft()
+    turtle.turnLeft()
+
+    if is_items_picked_up == false then
+      error("error: ran out of glass bottles")
+    end
+  end
+end
 ---@param count integer
 local function get_potion_count(count)
-  if turtle.getItemCount(SOURCE_SLOT.GLASS_BOTTLE) == 0 then
-    error("error: ran out of glass bottles")
-  end
   turtle.select(SOURCE_SLOT.GLASS_BOTTLE)
 
   local potions_count = 3
@@ -66,7 +82,7 @@ local function get_potion_count(count)
   elseif count == 2 then
     potions_count = 1
   elseif count <= 1 then
-    error("error: not enough glass bottles")
+    error("error: ran out of glass bottles")
   end
   return potions_count
 end
@@ -77,6 +93,7 @@ local function main()
     local leek_container = peripheral.wrap("left")
     local blaze_powder_container = peripheral.wrap("right")
     local output_container = peripheral.wrap("top")
+    local glass_bottle_container = peripheral.wrap("back")
 
     if output_container == nil then
       error("error: missing output_container barrel")
@@ -94,9 +111,15 @@ local function main()
       error("error: missing leek_container barrel")
     end
 
+    if glass_bottle_container == nil then
+      error("error: missing glass_bottle_container barrel")
+    end
+
     place_blaze_powder(brewing_stand, blaze_powder_container)
 
     place_medicinal_leek(leek_container, brewing_stand)
+
+    reload_glass_bottles(glass_bottle_container)
 
     local count = turtle.getItemCount(SOURCE_SLOT.GLASS_BOTTLE)
     local potions_count = get_potion_count(count)
