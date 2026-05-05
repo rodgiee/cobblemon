@@ -122,7 +122,7 @@ end
 ---@param vitamin string
 function ev_template.make_vitamin(vitamin)
   if VITAMIN[vitamin] == nil then
-    error("error: vitamin " .. vitamin .. " is not valid")
+    error('error: vitamin "' .. vitamin .. '" is not valid')
   end
   local ingredient_name = VITAMIN[vitamin].INGREDIENT
   local potion_name = VITAMIN[vitamin].POTION
