@@ -6,6 +6,10 @@ local TARGET_SLOT = {
   BLAZE_POWER = 5,
 }
 
+local SOURCE_SLOT = {
+  BREW = 5,
+}
+
 ---@param container ccTweaked.peripheral.wrappedPeripheral
 local function get_last_available_slot(container)
   local items = container.list()
@@ -28,7 +32,7 @@ local function place_ingredient(ingredient_container, brewing_stand, ingredient_
   end
 
   ingredient_container.pushItems(peripheral.getName(brewing_stand), available_slot, 1, TARGET_SLOT.INGREDIENT)
-  print("dropped 1 " .. ingredient_name)
+  print("transferred 1 " .. ingredient_name)
 end
 
 ---@param brewing_stand ccTweaked.peripheral.wrappedPeripheral
@@ -60,41 +64,61 @@ local function place_potion(potion_container, brewing_stand, potion_name)
     potion_container.pushItems(peripheral.getName(brewing_stand), available_slot, 1, TARGET_SLOT.POTION_ONE + i - 1)
   end
 
-  print("dropped " .. iterations .. " " .. potion_name)
+  print("transferred " .. iterations .. " " .. potion_name)
+  return iterations
+end
+
+---@param potion_count integer
+---@param output_name string
+local function place_output(potion_count, output_name)
+  turtle.select(SOURCE_SLOT.BREW)
+  for i = 1, potion_count do
+    turtle.suck()
+  end
+
+  turtle.dropUp()
+  print("outputted " .. potion_count .. " " .. output_name .. "!")
 end
 
 local function main()
-  local medicinal_brew_container = peripheral.wrap("left")
-  local vivichoke_container = peripheral.wrap("back")
-  local blaze_powder_container = peripheral.wrap("right")
-  local output_container = peripheral.wrap("top")
-  local brewing_stand = peripheral.wrap("front")
+  while true do
+    local medicinal_brew_container = peripheral.wrap("left")
+    local vivichoke_container = peripheral.wrap("back")
+    local blaze_powder_container = peripheral.wrap("right")
+    local output_container = peripheral.wrap("top")
+    local brewing_stand = peripheral.wrap("front")
 
-  if medicinal_brew_container == nil then
-    error("error: missing medicinal_brew_container")
+    if medicinal_brew_container == nil then
+      error("error: missing medicinal_brew_container")
+    end
+
+    if vivichoke_container == nil then
+      error("error: missing vivichoke_container")
+    end
+
+    if blaze_powder_container == nil then
+      error("error: missing blaze_powder_container")
+    end
+
+    if output_container == nil then
+      error("error: missing output_container")
+    end
+
+    if brewing_stand == nil then
+      error("error: missing brewing_stand")
+    end
+
+    place_blaze_powder(brewing_stand, blaze_powder_container)
+
+    place_ingredient(vivichoke_container, brewing_stand, "vivichoke")
+
+    local potions_count = place_potion(medicinal_brew_container, brewing_stand, "medicinal brew")
+
+    print("waiting...")
+    sleep(20)
+
+    place_output(potions_count, "pp up")
   end
-
-  if vivichoke_container == nil then
-    error("error: missing vivichoke_container")
-  end
-
-  if blaze_powder_container == nil then
-    error("error: missing blaze_powder_container")
-  end
-
-  if output_container == nil then
-    error("error: missing output_container")
-  end
-
-  if brewing_stand == nil then
-    error("error: missing brewing_stand")
-  end
-
-  place_blaze_powder(brewing_stand, blaze_powder_container)
-
-  place_ingredient(vivichoke_container, brewing_stand, "vivichoke")
-
-  place_potion(medicinal_brew_container, brewing_stand, "medicinal brew")
 end
 
 main()
