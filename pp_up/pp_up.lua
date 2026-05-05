@@ -18,6 +18,19 @@ local function get_last_available_slot(container)
   return last_available_slot
 end
 
+---@param ingredient_container ccTweaked.peripheral.wrappedPeripheral
+---@param brewing_stand ccTweaked.peripheral.wrappedPeripheral
+local function place_ingredient(ingredient_container, brewing_stand, ingredient_name)
+  local available_slot = get_last_available_slot(ingredient_container)
+
+  if available_slot == -1 then
+    error("error: ran out of " .. ingredient_name)
+  end
+
+  ingredient_container.pushItems(peripheral.getName(brewing_stand), available_slot, 1, TARGET_SLOT.INGREDIENT)
+  print("dropped 1 " .. ingredient_name)
+end
+
 ---@param brewing_stand ccTweaked.peripheral.wrappedPeripheral
 ---@param blaze_powder_container ccTweaked.peripheral.wrappedPeripheral
 local function place_blaze_powder(brewing_stand, blaze_powder_container)
@@ -60,6 +73,8 @@ local function main()
   end
 
   place_blaze_powder(brewing_stand, blaze_powder_container)
+
+  place_ingredient(vivichoke_container, brewing_stand, "vivichoke")
 end
 
 main()
