@@ -1,5 +1,15 @@
 local ev_template = {}
 
+local INGREDIENT_TO_OUTPUT = {
+  VIVICHOKE = "PP_UP",
+  QUALOT_BERRY = "IRON",
+  GREPA_BERRY = "ZINC",
+  KELPSY_BERRY = "PROTEIN",
+  POMEG_BERRY = "HP_UP",
+  HONDEW_BERRY = "CALCIUM",
+  TAMATO_BERRY = "CARBOS",
+}
+
 ---@alias VITAMIN table<string, table<string, string>>
 ---@type VITAMIN
 local VITAMIN = {
@@ -140,15 +150,16 @@ local function is_blaze_powder_sufficient(brewing_stand, container)
   return false
 end
 
----@param vitamin string
-function ev_template.make_vitamin(vitamin)
-  if VITAMIN[vitamin] == nil then
-    error('error: vitamin "' .. vitamin .. '" is not valid')
-  end
-  local ingredient_name = VITAMIN[vitamin].INGREDIENT
-  local potion_name = VITAMIN[vitamin].POTION
-  local output_name = VITAMIN[vitamin].OUTPUT
+---@param container ccTweaked.peripheral.wrappedPeripheral
+---@return string
+local function get_item_name_first_slot(container)
+  local item = container.list()[1].name
+  local colon_index = item:find(":") + 1
+  local item_name = item:sub(colon_index):upper()
+  return item_name
+end
 
+function ev_template.make()
   while true do
     local potion_container = peripheral.wrap("left")
     local ingredient_container = peripheral.wrap("back")
@@ -182,18 +193,22 @@ function ev_template.make_vitamin(vitamin)
     local is_blaze_powder_ready = is_blaze_powder_sufficient(brewing_stand, blaze_powder_container)
 
     if is_potion_ready == NOT_ENOUGH then
-      print("error: not enough " .. potion_name .. "!")
+      print("error: not enough in potion container!")
     end
 
     if is_ingredient_ready == NOT_ENOUGH then
-      print("error: not enough " .. ingredient_name .. "!")
+      print("error: not enough in ingredient container!")
     end
 
     if not is_blaze_powder_ready then
-      print("error: not enough Blaze Powder!")
+      print("error: not enough blaze powder container!")
     end
 
     if is_potion_ready ~= NOT_ENOUGH and is_ingredient_ready ~= NOT_ENOUGH and is_blaze_powder_ready then
+      local ingredient_name = get_item_name_first_slot(ingredient_container)
+      local potion_name = get_item_name_first_slot(potion_container)
+      local output_name = INGREDIENT_TO_OUTPUT[ingredient_name]
+
       place_blaze_powder(brewing_stand, blaze_powder_container)
 
       place_ingredient(ingredient_container, brewing_stand, ingredient_name)
