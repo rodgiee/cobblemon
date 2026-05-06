@@ -124,6 +124,49 @@ local function place_output(potion_count, output_name)
   print("outputted " .. potion_count .. " " .. output_name .. "!")
 end
 
+---@param container ccTweaked.peripheral.wrappedPeripheral
+---@param required_amount integer
+---@return boolean
+local function is_ingredient_sufficient(container, required_amount)
+  local available_slot = get_last_available_slot(container)
+
+  if available_slot == -1 then
+    return false
+  end
+
+  -- if current slot does not have enough items but the next slot does count the next
+  local count = container.list()[available_slot].count
+  local carry = container.list()[available_slot - 1]
+
+  if carry ~= nil then
+    count = count + carry.count
+  end
+
+  if count >= required_amount then
+    return true
+  end
+
+  return false
+end
+
+---@param container ccTweaked.peripheral.wrappedPeripheral
+---@return boolean
+local function is_blaze_powder_sufficient(brewing_stand, container)
+  local brewing_stand_blaze_powder_slot = brewing_stand.list()[5]
+
+  if brewing_stand_blaze_powder_slot ~= nil then
+    return true
+  end
+
+  local available_slot = get_last_available_slot(container)
+
+  if available_slot ~= -1 then
+    return true
+  end
+
+  return false
+end
+
 ---@param vitamin string
 function ev_template.make_vitamin(vitamin)
   if VITAMIN[vitamin] == nil then
@@ -158,6 +201,23 @@ function ev_template.make_vitamin(vitamin)
 
     if brewing_stand == nil then
       error("error: missing brewing_stand")
+    end
+
+    -- check if enough ingredients
+    local is_potion_ready = is_ingredient_sufficient(potion_container, 3)
+    local is_ingredient_ready = is_ingredient_sufficient(ingredient_container, 1)
+    local is_blaze_powder_ready = is_blaze_powder_sufficient(brewing_stand, blaze_powder_container)
+
+    if not is_potion_ready then
+      print("error: not enough " .. { potion_name } .. "!")
+    end
+
+    if not is_ingredient_ready then
+      print("error: not enough " .. { ingredient_name } .. "!")
+    end
+
+    if not is_blaze_powder_ready then
+      print("error: not enough blaze powder!")
     end
 
     place_blaze_powder(brewing_stand, blaze_powder_container)
