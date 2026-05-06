@@ -40,6 +40,8 @@ local VITAMIN = {
   },
 }
 
+local NOT_ENOUGH = -1
+
 local ev_type = {}
 
 local TARGET_SLOT = {
@@ -179,11 +181,11 @@ function ev_template.make_vitamin(vitamin)
     local is_ingredient_ready = get_last_available_slot(ingredient_container)
     local is_blaze_powder_ready = is_blaze_powder_sufficient(brewing_stand, blaze_powder_container)
 
-    if is_potion_ready == -1 then
+    if is_potion_ready == NOT_ENOUGH then
       print("error: not enough " .. potion_name .. "!")
     end
 
-    if is_ingredient_ready == -1 then
+    if is_ingredient_ready == NOT_ENOUGH then
       print("error: not enough " .. ingredient_name .. "!")
     end
 
@@ -191,16 +193,24 @@ function ev_template.make_vitamin(vitamin)
       print("error: not enough Blaze Powder!")
     end
 
-    place_blaze_powder(brewing_stand, blaze_powder_container)
+    if is_potion_ready ~= NOT_ENOUGH and is_ingredient_ready ~= NOT_ENOUGH and is_blaze_powder_ready then
+      place_blaze_powder(brewing_stand, blaze_powder_container)
 
-    place_ingredient(ingredient_container, brewing_stand, ingredient_name)
+      place_ingredient(ingredient_container, brewing_stand, ingredient_name)
+      local potions_count = place_potion(potion_container, brewing_stand, potion_name)
 
-    local potions_count = place_potion(potion_container, brewing_stand, potion_name)
+      print("waiting...")
+      sleep(20)
 
-    print("waiting...")
-    sleep(20)
-
-    place_output(potions_count, output_name)
+      place_output(potions_count, output_name)
+    else
+      print("diagnostic: please restock necessary ingredients")
+      print("diagnostic: restarting process soon")
+      sleep(4)
+    end
+    print("restarting process...")
+    sleep(1)
+    shell.run("clear")
   end
 end
 
