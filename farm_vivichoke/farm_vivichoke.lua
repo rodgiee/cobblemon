@@ -21,18 +21,12 @@ end
 
 local function main()
   while true do
-    -- check if there is enough fuel, if not then restock
-    local is_ready_to_harvest = helpers.scan_ready()
-
-    if is_ready_to_harvest then
-      print("harvesting!")
-      main_helper()
-    else
-      print("farm is not ready to harvest")
-    end
+    print("harvesting...")
+    main_helper()
+    print("farm is not ready to harvest")
 
     print("resting...")
-    sleep(120)
+    sleep(300)
   end
 end
 

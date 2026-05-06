@@ -112,8 +112,8 @@ function helpers.traverse_farm(grid_length)
       end
     else
       turtle.forward()
-      helpers.harvest()
     end
+    helpers.harvest()
     blocks_traversed = blocks_traversed + 1
   end
 
