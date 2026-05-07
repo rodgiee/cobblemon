@@ -184,7 +184,8 @@ end
 ---@param container ccTweaked.peripheral.wrappedPeripheral
 ---@return string
 local function get_item_name_first_slot(container)
-  local item = container.list()[1].name
+  local index, object = next(container.list())
+  local item = object.name
   local colon_index = item:find(":") + 1
   local item_name = item:sub(colon_index):upper()
   return item_name
@@ -219,7 +220,7 @@ function ev_template.make()
     end
 
     -- check if enough ingredients
-    local is_potion_ready = get_last_available_slot(potion_container)
+    local is_potion_ready = not next(potion_container.list()) == nil -- medicinal brew is an edge
     local is_ingredient_ready = get_last_available_slot(ingredient_container)
     local is_blaze_powder_ready = is_blaze_powder_sufficient(brewing_stand, blaze_powder_container)
 
