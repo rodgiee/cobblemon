@@ -113,13 +113,10 @@ local function place_glass_bottle(potion_name)
   local potion_count = 0
   turtle.turnLeft()
   for i = SOURCE_SLOT.POTION_ONE, SOURCE_SLOT.POTION_THREE do
-    local available_slot = get_last_available_slot(peripheral.wrap("front"))
-    if available_slot == -1 then
+    turtle.select(i)
+    if turtle.suck(1) == false then
       break
     end
-
-    turtle.select(i)
-    turtle.suck(1)
     turtle.placeDown()
     potion_count = potion_count + 1
   end
@@ -137,7 +134,7 @@ end
 ---@param brewing_stand ccTweaked.peripheral.wrappedPeripheral
 local function place_potion(potion_container, brewing_stand, potion_name)
   if potion_name == "GLASS_BOTTLE" then -- medicinal brew recipe (requires filling water)
-    return place_glass_bottle(potion_container)
+    return place_glass_bottle(potion_name)
   end
   local potion_count = 0
   for i = 1, 3 do
