@@ -184,7 +184,10 @@ end
 ---@param container ccTweaked.peripheral.wrappedPeripheral
 ---@return string
 local function get_item_name_first_slot(container)
-  local index, object = next(container.list())
+  local _, object = next(container.list())
+  if object == nil then
+    error("error: get_item_name_first_slot reads nil object")
+  end
   local item = object.name
   local colon_index = item:find(":") + 1
   local item_name = item:sub(colon_index):upper()
@@ -220,15 +223,15 @@ function ev_template.make()
     end
 
     -- check if enough ingredients
-    local is_potion_ready = not next(potion_container.list()) == nil -- medicinal brew is an edge
-    local is_ingredient_ready = get_last_available_slot(ingredient_container)
+    local is_potion_ready = next(potion_container.list()) ~= nil -- medicinal brew is an edge
+    local is_ingredient_ready = next(ingredient_container.list()) ~= nil
     local is_blaze_powder_ready = is_blaze_powder_sufficient(brewing_stand, blaze_powder_container)
 
-    if is_potion_ready == NOT_ENOUGH then
+    if not is_potion_ready then
       print("error: not enough in potion container!")
     end
 
-    if is_ingredient_ready == NOT_ENOUGH then
+    if not is_ingredient_ready then
       print("error: not enough in ingredient container!")
     end
 
@@ -236,7 +239,7 @@ function ev_template.make()
       print("error: not enough blaze powder container!")
     end
 
-    if is_potion_ready ~= NOT_ENOUGH and is_ingredient_ready ~= NOT_ENOUGH and is_blaze_powder_ready then
+    if is_potion_ready and is_ingredient_ready and is_blaze_powder_ready then
       local ingredient_name = get_item_name_first_slot(ingredient_container)
       local potion_name = get_item_name_first_slot(potion_container)
       local output_name = INGREDIENT_TO_OUTPUT[ingredient_name]
