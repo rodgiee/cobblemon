@@ -1,7 +1,6 @@
---@return string[]
-local function get_files()
+---@param ip string
+local function get_files(ip)
   local result = {}
-  local ip = "http://192.168.86.26:8000/"
 
   local response = http.get(ip)
 
@@ -12,7 +11,6 @@ local function get_files()
   local line = response.readLine()
   while line ~= nil do
     if line:find("<li>") then
-      --result:insert(line:match('"(.-)"'))
       table.insert(result, line:match('"(.-)"'))
     end
     line = response.readLine()
@@ -20,20 +18,28 @@ local function get_files()
   return result
 end
 
-local function update_files()
-  for i, file in ipairs(get_files()) do
-    local res = http.get("http://192.168.86.26:8000/" .. file)
+---@param ip string
+local function update_files(ip)
+  for _, f in ipairs(get_files(ip)) do
+    local res = http.get(ip .. f)
 
     if res == nil then
       error("error: file not found")
     end
 
-    res = res.readAll()
+    local res_all = res.readAll()
 
-    local file = fs.open(file, "w")
+    local file = fs.open(f, "w")
 
-    file.write(res)
+    if file == nil then
+      error("error: file creation failed")
+    end
+
+    file.write(res_all)
+
+    file.close()
   end
 end
 
-update_files()
+local ip = "http://localhost:8000/"
+update_files(ip)

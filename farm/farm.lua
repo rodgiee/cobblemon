@@ -1,6 +1,7 @@
 local helpers = require("helpers")
 
 local FUEL_REQUIREMENT = 100
+local POLLING_TIME = 600
 
 local function main_helper()
   local is_fuel_ready = helpers.is_enough_fuel(FUEL_REQUIREMENT)
